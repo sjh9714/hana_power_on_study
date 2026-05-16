@@ -8,9 +8,9 @@ Pandas를 제대로 사용하려면 반드시 아래 2가지를 완전히 이해
 
 Pandas는 내부적으로 아래 2개의 자료구조를 사용합니다.
 
-| 구조        | 설명          |
-| --------- | ----------- |
-| Series    | 1차원 데이터     |
+| 구조      | 설명                |
+| --------- | ----------- ------- |
+| Series    | 1차원 데이터        |
 | DataFrame | 2차원 테이블 데이터 |
 
 ---
@@ -268,16 +268,16 @@ DataFrame
 
 
 ```python id="kpsls8"
-print(df[0])
+print("name")
 ```
 
 👉 결과는 Series
 
 ```
-0    Kim
-1     20
-2     90
-Name: name, dtype: object
+0     Kim
+1     Lee
+2    Park
+Name: name, dtype: str
 ```
 
 ---
