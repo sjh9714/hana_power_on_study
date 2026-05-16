@@ -268,7 +268,7 @@ DataFrame
 
 
 ```python id="kpsls8"
-print(df["name"])
+print(df[0])
 ```
 
 👉 결과는 Series
