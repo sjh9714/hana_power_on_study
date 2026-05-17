@@ -25,3 +25,4 @@ build/
 *.sqlite
 *.sqlite3
 *.log
+step1/data/credit_card_transactions.csv
