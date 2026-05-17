@@ -25,4 +25,7 @@ build/
 *.sqlite
 *.sqlite3
 *.log
+step1/.venv/
+step1/myenv/
+step1/.vscode/
 step1/data/credit_card_transactions.csv
