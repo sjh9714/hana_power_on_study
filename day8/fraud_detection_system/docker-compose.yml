@@ -1,0 +1,95 @@
+version: "3.9"
+
+services:
+
+  # =====================================================
+  # Redis
+  # =====================================================
+
+  redis:
+
+    image: redis:7-alpine
+
+    container_name: redis-fds
+
+    restart: always
+
+    ports:
+      - "6379:6379"
+
+    command: >
+      redis-server
+      --appendonly yes
+      --save 60 1000
+
+    volumes:
+      - redis_data:/data
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    networks:
+      - fraud-network
+
+
+  # =====================================================
+  # FastAPI FDS
+  # =====================================================
+
+  fraud-api:
+
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: fraud-api
+
+    restart: always
+
+    ports:
+      - "8000:8000"
+
+    depends_on:
+      redis:
+        condition: service_healthy
+
+    environment:
+
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+    volumes:
+
+      - ./app:/app/app
+
+      - ./app/model:/app/app/model
+
+    command: >
+      uvicorn
+      app.main:app
+      --host 0.0.0.0
+      --port 8000
+
+    networks:
+      - fraud-network
+
+
+# =====================================================
+# 볼륨
+# =====================================================
+
+volumes:
+
+  redis_data:
+
+
+# =====================================================
+# 네트워크
+# =====================================================
+
+networks:
+
+  fraud-network:
