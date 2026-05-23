@@ -16,6 +16,9 @@
 # 모델 호출
 # 결과 반환
 
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+from fastapi import Request
 from fastapi import FastAPI
 
 # ============================================================
@@ -91,6 +94,7 @@ from services.risk_scoring import (
 # API 서버 시작점
 
 app = FastAPI()
+templates = Jinja2Templates(directory="/app/app/templates")
 
 
 # ============================================================
@@ -123,6 +127,17 @@ kmeans = joblib.load("app/model/kmeans.pkl")
 scaler = joblib.load("app/model/scaler.pkl")
 
 
+@app.get("/", response_class=HTMLResponse)
+def home(request: Request):
+
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html",
+        context={
+            "request": request
+        }
+    )
+
 # ============================================================
 # 실시간 탐지 API
 # ============================================================
@@ -141,7 +156,6 @@ scaler = joblib.load("app/model/scaler.pkl")
 # }
 
 @app.post("/predict")
-
 def predict(tx: Transaction):
 
     # ========================================================
