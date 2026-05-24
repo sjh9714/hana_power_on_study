@@ -2,6 +2,9 @@ numpy
 matplotlib
 pandas
 seaborn
+scikit-learn
+joblib
+xgboost
 jupyter
 ipykernel
 koreanize-matplotlib #OS에 독립적인 한글 라이브러리 
