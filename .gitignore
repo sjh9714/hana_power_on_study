@@ -29,3 +29,5 @@ step1/.venv/
 step1/myenv/
 step1/.vscode/
 step1/data/credit_card_transactions.csv
+data/credit_card_transactions.csv
+step1/notebooks/data
