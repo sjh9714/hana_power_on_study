@@ -1,0 +1,7 @@
+tiktoken
+openai
+transformers
+torch
+sentence_transformers
+scikit-learn
+scipy
