@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+
+    <title>Fraud Detection</title>
+
+    <style>
+
+        body{
+            font-family: Arial;
+            width:500px;
+            margin:40px auto;
+        }
+
+        input{
+            width:100%;
+            padding:10px;
+            margin-top:10px;
+        }
+
+        button{
+            width:100%;
+            padding:12px;
+            margin-top:20px;
+            background:#007bff;
+            color:white;
+            border:none;
+            cursor:pointer;
+        }
+
+        button:hover{
+            background:#0056b3;
+        }
+
+        #result{
+            margin-top:30px;
+            border:1px solid #ccc;
+            padding:15px;
+            background:#f4f4f4;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <h1>실시간 카드 사기 탐지</h1>
+
+    카드번호: <input id="cc_num" value="1001" placeholder="카드번호"><br/>
+
+    거래금액: <input id="amt" value="3000" placeholder="거래금액"><br/>
+
+    위도: <input id="lat" value="40.1" placeholder="위도"><br/>
+
+    경도: <input id="long" value="-73.1" placeholder="경도"><br/>
+
+    가맹점 위도: <input id="merch_lat" value="42.5" placeholder="가맹점 위도"><br/>
+
+    가맹점 경도: <input id="merch_long" value="-75.2" placeholder="가맹점 경도"><br/>
+
+    시간:  <input id="hour" value="2" placeholder="시간"><br/>
+
+    <button onclick="predictFraud()">
+        예측 실행
+    </button>
+
+    <div id="result">
+        결과 출력 영역
+    </div>
+
+    <script>
+
+        async function predictFraud(){
+
+            const data = {
+
+                cc_num: Number(
+                    document.getElementById("cc_num").value
+                ),
+
+                amt: Number(
+                    document.getElementById("amt").value
+                ),
+
+                lat: Number(
+                    document.getElementById("lat").value
+                ),
+
+                long: Number(
+                    document.getElementById("long").value
+                ),
+
+                merch_lat: Number(
+                    document.getElementById("merch_lat").value
+                ),
+
+                merch_long: Number(
+                    document.getElementById("merch_long").value
+                ),
+
+                hour: Number(
+                    document.getElementById("hour").value
+                )
+            };
+
+            const response = await fetch(
+                "/predict",
+                {
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+
+                    body: JSON.stringify(data)
+                }
+            );
+
+            const result = await response.json();
+
+            document.getElementById(
+                "result"
+            ).innerHTML = `
+
+                <h3>예측 결과</h3>
+
+                <p>
+                    Fraud Probability:
+                    ${result.fraud_probability}
+                </p>
+
+                <p>
+                    Risk Score:
+                    ${result.risk_score}
+                </p>
+
+                <p>
+                    Action:
+                    ${result.action}
+                </p>
+
+                <p>
+                    Segment:
+                    ${result.segment}
+                </p>
+            `;
+        }
+
+    </script>
+
+</body>
+</html>

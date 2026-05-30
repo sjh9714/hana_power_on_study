@@ -64,8 +64,9 @@ services:
     volumes:
 
       - ./app:/app/app
+
       - ./app/model:/app/app/model
-      
+
     command: >
       uvicorn
       app.main:app
