@@ -1,115 +1,176 @@
 # ============================================================
-# FastAPI
+# FastAPI import
 # ============================================================
 
+# FastAPI:
+#
+# 고성능 Python API 서버 프레임워크
+#
+# 금융권에서는:
+#
+# 실시간 AI 추론 서버
+#
+# 역할
+#
+# 거래 요청 수신
+# 모델 호출
+# 결과 반환
+
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+from fastapi import Request
 from fastapi import FastAPI
 
 # ============================================================
-# 기본 라이브러리
+# 모델 저장/로드
 # ============================================================
-
+# 학습된 모델(.pkl) 로드용
 import joblib
+
+# ============================================================
+# DataFrame 생성용
+# ============================================================
+# 모델 입력 형식 맞추기
 import pandas as pd
-import numpy as np
+
 
 # ============================================================
-# TensorFlow AutoEncoder 로드
+# 거래 요청 객체
 # ============================================================
-
-from tensorflow.keras.models import load_model
-
-# ============================================================
-# Request Schema
-# ============================================================
-
+# API 요청 JSON
+#
+# →
+#
+# Python 객체 자동 변환
 from schemas.transaction import Transaction
 
-# ============================================================
-# Redis 서비스
-# ============================================================
 
+# ============================================================
+# Redis 상태 서비스
+# ============================================================
+# 고객 이전 상태 조회
+#
+# 거래 후 상태 저장
 from services.redis_service import (
     get_customer_state,
     save_customer_state
 )
 
 # ============================================================
-# Feature 생성
+# Feature 생성 엔진
 # ============================================================
 
+# 현재 거래
+# +
+# 이전 고객 상태
+#
+# →
+#
+# AI 입력값 생성
 from services.feature_engineering import (
     create_features
 )
 
+
 # ============================================================
-# Risk 계산
+# Risk 점수 계산
 # ============================================================
+
+# Fraud 확률
+#
+# →
+#
+# 승인/MFA/차단
 
 from services.risk_scoring import (
     calculate_risk
 )
 
+
 # ============================================================
-# FastAPI 객체
+# FastAPI 객체 생성
 # ============================================================
 
+# API 서버 시작점
+
 app = FastAPI()
+templates = Jinja2Templates(directory="/app/app/templates")
+
 
 # ============================================================
 # 모델 로드
 # ============================================================
 
-# ============================================================
-# XGBoost
-# ============================================================
-
-model = joblib.load(
-    "app/model/xgb_model.pkl"
-)
+# 서버 시작 시
+#
+# 메모리로 로드
+#
+# 매 요청마다 파일 읽으면 느림
 
 # ============================================================
-# KMeans
+# XGBoost 모델
 # ============================================================
-
-kmeans = joblib.load(
-    "app/model/kmeans.pkl"
-)
+# 최종 Fraud Detection 모델
+model = joblib.load("app/model/xgb_model.pkl")
 
 # ============================================================
-# Isolation Forest
+# KMeans 모델
 # ============================================================
+# 고객 그룹 생성 모델
+kmeans = joblib.load("app/model/kmeans.pkl")
 
-iso_model = joblib.load(
-    "app/model/isolation_forest.pkl"
-)
 
 # ============================================================
 # Scaler
 # ============================================================
+# 정규화 모델
+scaler = joblib.load("app/model/scaler.pkl")
 
-scaler = joblib.load(
-    "app/model/scaler.pkl"
-)
+
+@app.get("/", response_class=HTMLResponse)
+def home(request: Request):
+
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html",
+        context={
+            "request": request
+        }
+    )
 
 # ============================================================
-# AutoEncoder
+# 실시간 탐지 API
 # ============================================================
 
-autoencoder = load_model(
-    "app/model/autoencoder.h5"
-)
-
-# ============================================================
-# 실시간 Fraud Detection API
-# ============================================================
+# POST:
+#
+# /predict
+#
+# 예:
+#
+# POST /predict
+#
+# {
+#   "cc_num":123,
+#   "amt":900
+# }
 
 @app.post("/predict")
-
 def predict(tx: Transaction):
 
     # ========================================================
-    # 1. 고객 이전 상태 조회
+    # 1. Redis 고객 상태 조회
     # ========================================================
+
+    # 현재 거래만 보면 부족
+    #
+    # 이전 상태 필요
+    #
+    # 예:
+    #
+    # 거래 횟수
+    # 평균 금액
+    # 야간 비율
 
     state = get_customer_state(
         tx.cc_num
@@ -119,7 +180,18 @@ def predict(tx: Transaction):
     # 2. Feature 생성
     # ========================================================
 
+    # 현재 거래
+    #
+    # +
+    #
+    # 이전 상태
+    #
+    # →
+    #
+    # AI Feature 생성
+
     features, updated_state = (
+
         create_features(
             tx,
             state
@@ -127,197 +199,133 @@ def predict(tx: Transaction):
     )
 
     # ========================================================
-    # 3. KMeans 입력 생성
+    # 3. KMeans 고객 세그먼트 생성
     # ========================================================
 
-    segment_features = pd.DataFrame([{
+    # KMeans 입력 Feature
 
-        "amt":
-            features["amt"],
-
-        "hour":
-            features["hour"],
-
-        "dayofweek":
-            features["dayofweek"],
-
-        "month":
-            features["month"],
-
-        "night_transaction":
-            features["night_transaction"],
-
-        "distance":
-            features["distance"],
-
-        "amount_ratio":
-            features["amount_ratio"],
-
-        "customer_tx_count":
-            features["customer_tx_count"],
-
-        "time_diff":
-            features["time_diff"],
-
-        "velocity_flag":
-            features["velocity_flag"]
-
+    segment_input = pd.DataFrame([{
+        "transaction_count":
+            features[
+                "transaction_count"
+            ],
+        "avg_amount":
+            features[
+                "avg_amount"
+            ],
+        "night_ratio":
+            features[
+                "night_ratio"
+            ],
+        "avg_distance":
+            features[
+                "avg_distance"
+            ]
     }])
 
     # ========================================================
     # 4. 정규화
     # ========================================================
 
-    X_scaled = scaler.transform(
-        segment_features
+    # 학습 때 사용한
+    # 동일 Scaler 사용
+
+    segment_scaled = scaler.transform(
+        segment_input
     )
 
     # ========================================================
-    # 5. 고객 세그먼트 생성
+    # 5. 고객 그룹 예측
     # ========================================================
 
-    segment = kmeans.predict(
-        X_scaled
-    )[0]
+    # 예:
+    #
+    # Segment:
+    #
+    # 0 일반
+    # 1 VIP
+    # 2 야간형
+    # 3 장거리형
 
-    # ========================================================
-    # 6. Isolation Forest 이상 점수
-    # ========================================================
-
-    iso_score = (
-        iso_model.decision_function(
-            X_scaled
+    segment = (
+        kmeans.predict(
+            segment_scaled
         )[0]
     )
 
     # ========================================================
-    # 7. AutoEncoder Reconstruction Error
+    # 6. Segment 추가
     # ========================================================
 
-    reconstructed = autoencoder.predict(
-        X_scaled,
-        verbose=0
-    )
-
-    reconstruction_error = np.mean(
-
-        np.power(
-            X_scaled - reconstructed,
-            2
-        ),
-
-        axis=1
-
-    )[0]
-
-    # ========================================================
-    # 8. 최종 Feature 구성
-    # ========================================================
+    # KMeans 결과를
+    #
+    # XGBoost Feature로 추가
 
     features["segment"] = segment
 
-    features["iso_score"] = iso_score
-
-    features[
-        "reconstruction_error"
-    ] = reconstruction_error
-
     # ========================================================
-    # 9. 최종 XGBoost 입력
+    # 7. XGBoost 입력 생성
     # ========================================================
-
-    final_features = [
-
-        "amt",
-        "hour",
-        "dayofweek",
-        "month",
-        "night_transaction",
-        "distance",
-        "amount_ratio",
-        "customer_tx_count",
-        "time_diff",
-        "velocity_flag",
-        "segment",
-        "iso_score",
-        "reconstruction_error"
-
-    ]
 
     X = pd.DataFrame([
-        {
-            key: features[key]
-            for key in final_features
-        }
+        features
     ])
 
     # ========================================================
-    # 10. Fraud 확률 계산
+    # 8. Fraud 확률 계산
     # ========================================================
+
+    # predict_proba:
+    #
+    # [정상확률,사기확률]
+    #
+    # 예:
+    #
+    # [0.1,0.9]
 
     probability = (
-        model.predict_proba(X)[0][1]
+        model.predict_proba(
+            X
+        )[0][1]
     )
 
     # ========================================================
-    # 11. Rule Engine
+    # [0][1] 의미
     # ========================================================
 
-    rule_score = 0
+    # [0]
+    #
+    # 첫 번째 데이터
+    #
+    # [1]
+    #
+    # Fraud 확률
+
 
     # ========================================================
-    # 고액 거래
+    # 9. Risk Score 계산
     # ========================================================
 
-    if features["amt"] > 3000:
-        rule_score += 1
-
-    # ========================================================
-    # 야간 거래
-    # ========================================================
-
-    if features["night_transaction"] == 1:
-        rule_score += 1
-
-    # ========================================================
-    # 매우 빠른 거래
-    # ========================================================
-
-    if features["time_diff"] < 30:
-        rule_score += 1
-
-    # ========================================================
-    # 이동 거리 큼
-    # ========================================================
-
-    if features["distance"] > 5:
-        rule_score += 1
-
-    # ========================================================
-    # 최종 위험 점수
-    # ========================================================
-
-    final_score = (
-
-        probability * 0.7 +
-
-        (rule_score / 4) * 0.3
-
-    )
-
-    # ========================================================
-    # 승인 정책
-    # ========================================================
+    # 확률
+    #
+    # →
+    #
+    # 업무 처리
 
     risk_score, action = (
         calculate_risk(
-            final_score
+            probability
         )
     )
 
+
     # ========================================================
-    # 12. Redis 상태 저장
+    # 10. Redis 상태 저장
     # ========================================================
+
+    # 거래 완료 후
+    #
+    # 최신 상태 저장
 
     save_customer_state(
         tx.cc_num,
@@ -325,41 +333,28 @@ def predict(tx: Transaction):
     )
 
     # ========================================================
-    # 13. API 응답
+    # 11. API 응답
     # ========================================================
 
     return {
-
-        # Fraud 확률
+        # 사기 확률
         "fraud_probability":
-            float(probability),
-
-        # Isolation Forest 점수
-        "iso_score":
-            float(iso_score),
-
-        # AutoEncoder 오차
-        "reconstruction_error":
-            float(reconstruction_error),
-
-        # Rule 점수
-        "rule_score":
-            int(rule_score),
-
-        # 최종 위험 점수
+            float(
+                probability
+            ),
+        # 위험 점수
         "risk_score":
-            float(risk_score),
+            float(
+                risk_score
+            ),
 
-        # 업무 처리
-        #
-        # APPROVE
-        # MFA
-        # BLOCK
+        # 승인 정책
         "action":
             action,
 
-        # 고객 세그먼트
+        # 고객 그룹
         "segment":
             int(segment)
 
     }
+

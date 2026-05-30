@@ -1,0 +1,7 @@
+pandas
+seaborn
+joblib
+fastapi
+pydantic
+scikit-learn
+uvicorn

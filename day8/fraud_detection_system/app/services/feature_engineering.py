@@ -1,224 +1,284 @@
-# ============================================================
-# 라이브러리
-# ============================================================
-
 import numpy as np
-import pandas as pd
-
 
 # ============================================================
-# Feature 생성
+# 실시간 Feature 생성 함수
 # ============================================================
 
-def create_features(tx, state):
+# 입력: tx
+#     현재 거래 정보
+#
+# customer_state
+#     Redis에 저장된 고객 상태
+
+# 출력: feature
+#     AI 모델(XGBoost) 입력값
+#
+# updated_state
+#     Redis에 다시 저장할 고객 최신 상태
+#
+def create_features(tx, customer_state):
 
     # ========================================================
-    # 거래 시간
+    # 1. 고객 위치 ↔ 가맹점 위치 거리 계산
     # ========================================================
 
-    dt = pd.to_datetime(
-        tx.trans_date_trans_time
-    )
-
-    hour = dt.hour
-
-    dayofweek = dt.dayofweek
-
-    month = dt.month
-
-    # ========================================================
-    # 야간 거래 여부
-    # ========================================================
-
-    night_transaction = int(
-        (hour >= 22) or
-        (hour <= 5)
-    )
-
-    # ========================================================
-    # 거리 계산
-    # ========================================================
+    # 현재 거래 위치와
+    # 가맹점 위치 거리 계산
+    #
+    # 실제 금융권:
+    #
+    # 갑자기 매우 먼 거리 이동
+    #
+    # 예:
+    #
+    # 서울
+    # ↓ 5분
+    # 부산
+    #
+    # → 불가능한 이동
+    #
+    # → 위험 증가
+    #
+    # 현재 예제:
+    #
+    # 단순 유클리드 거리
+    #
+    # 실제 금융권:
+    #
+    # Haversine 공식(GPS 거리)
+    # 사용
 
     distance = np.sqrt(
 
+        # 위도 차이 제곱
         (tx.lat - tx.merch_lat) ** 2 +
 
+        # 경도 차이 제곱
         (tx.long - tx.merch_long) ** 2
     )
 
     # ========================================================
-    # 이전 상태가 없으면 초기값 생성
+    # 2. 거래 횟수 증가
     # ========================================================
 
-    if state is None:
-
-        state = {
-
-            "transaction_count": 0,
-
-            "total_amount": 0,
-
-            "night_count": 0,
-
-            "total_distance": 0,
-
-            "last_transaction_time": None
-        }
-
-    # ========================================================
-    # 거래 횟수 증가
-    # ========================================================
+    # Redis에 저장된
+    # 이전 거래 횟수 +1
+    #
+    # 이유:
+    #
+    # 현재 거래 발생했기 때문
+    #
+    # 예:
+    #
+    # 기존:
+    #
+    # transaction_count=10
+    #
+    # 현재 거래 발생
+    #
+    # →11
 
     transaction_count = (
-        state["transaction_count"] + 1
+        customer_state["transaction_count"] + 1
     )
 
     # ========================================================
-    # 총 거래 금액
+    # 3. 누적 거래 금액 계산
     # ========================================================
 
-    total_amount = (
-        state["total_amount"] + tx.amt
-    )
+    # 이전 거래 총합
+    #
+    # +
+    #
+    # 현재 거래 금액
+
+    total_amount = (customer_state["total_amount"] + tx.amt)
 
     # ========================================================
-    # 평균 거래 금액
+    # 4. 평균 거래 금액 계산
     # ========================================================
 
-    avg_amount = (
-        total_amount /
-        transaction_count
-    )
+    # 금융권 핵심 Feature
+    #
+    # 고객 평소 소비 패턴 생성
+    #
+    # 예:
+    #
+    # 평균:
+    #
+    # 5만원
+    #
+    # 갑자기:
+    #
+    # 500만원
+    #
+    # → 위험 가능성
+
+    avg_amount = (total_amount / transaction_count)
 
     # ========================================================
-    # amount_ratio
+    # 5. 야간 거래 수 조회
     # ========================================================
 
-    amount_ratio = (
-        tx.amt /
-        (avg_amount + 1)
-    )
+    # Redis 이전 상태 읽기
+
+    night_count = customer_state["night_count"]
 
     # ========================================================
-    # 야간 거래 횟수
+    # 6. 현재 거래가 야간인지 확인
     # ========================================================
 
-    night_count = (
-        state["night_count"] +
-        night_transaction
-    )
+    # 금융권 핵심 Feature
+    #
+    # 새벽 거래는
+    # 사기 비율이 높아지는 경향 존재
+    #
+    # 조건:
+    #
+    # 22시 이후
+    #
+    # 또는
+    #
+    # 5시 이전
+
+    if tx.hour >= 22 or tx.hour <= 5:
+
+        # 야간 거래 횟수 증가
+        night_count += 1
 
     # ========================================================
+    # 7. 야간 거래 비율 계산
+    # ========================================================
+
+    # night_ratio:
+    #
+    # 전체 거래 중
     # 야간 거래 비율
-    # ========================================================
+    #
+    # 예:
+    #
+    # 거래:
+    #
+    # 20건
+    #
+    # 야간:
+    #
+    # 5건
+    #
+    # 결과:
+    #
+    # 5/20
+    #
+    # =0.25
 
-    night_ratio = (
-        night_count /
-        transaction_count
-    )
-
-    # ========================================================
-    # 총 이동 거리
-    # ========================================================
-
-    total_distance = (
-        state["total_distance"] +
-        distance
-    )
-
-    # ========================================================
-    # 평균 이동 거리
-    # ========================================================
-
-    avg_distance = (
-        total_distance /
-        transaction_count
-    )
+    night_ratio = (night_count / transaction_count)
 
     # ========================================================
-    # 이전 거래 시간 차이
+    # 8. 누적 이동 거리 계산
     # ========================================================
 
-    if state["last_transaction_time"]:
+    # 이전 누적 거리
+    #
+    # +
+    #
+    # 현재 거리
 
-        prev_time = pd.to_datetime(
-            state["last_transaction_time"]
-        )
-
-        time_diff = (
-            dt - prev_time
-        ).total_seconds()
-
-    else:
-
-        time_diff = 999999
+    total_distance = (customer_state["total_distance"] + distance)
 
     # ========================================================
-    # Velocity Feature
+    # 9. 평균 이동 거리 계산
     # ========================================================
 
-    velocity_flag = int(
-        time_diff < 60
-    )
+    # 고객 평소 이동 패턴
+    #
+    # 예:
+    #
+    # 평소:
+    #
+    # 2km
+    #
+    # 갑자기:
+    #
+    # 300km
+    #
+    # 위험 증가
+
+    avg_distance = (total_distance / transaction_count)
 
     # ========================================================
-    # 최종 Feature
+    # 10. AI 입력 Feature 생성
     # ========================================================
+
+    # XGBoost 모델 입력값
+    #
+    # 실시간 예측용
 
     features = {
 
-        "amt":
-            tx.amt,
+        # 거래 횟수
+        #
+        # Velocity 탐지
+        #
+        # 짧은 시간 내 급증 여부
+        "transaction_count": transaction_count,
 
-        "hour":
-            hour,
+        # 평균 소비 금액
+        #
+        # 고객 패턴
+        "avg_amount": avg_amount,
 
-        "dayofweek":
-            dayofweek,
+        # 소비 변동성
+        #
+        # 현재 예제:
+        #
+        # 계산 생략
+        #
+        # 실제:
+        #
+        # 표준편차 사용
+        "std_amount": 0,
 
-        "month":
-            month,
+        # 야간 거래 비율
+        "night_ratio": night_ratio,
 
-        "night_transaction":
-            night_transaction,
-
-        "distance":
-            distance,
-
-        "amount_ratio":
-            amount_ratio,
-
-        "customer_tx_count":
-            transaction_count,
-
-        "time_diff":
-            time_diff,
-
-        "velocity_flag":
-            velocity_flag
+        # 평균 이동 거리
+        "avg_distance": avg_distance
 
     }
 
     # ========================================================
-    # 업데이트 상태
+    # 11. Redis 저장용 최신 상태 생성
     # ========================================================
+
+    # 거래 완료 후
+    #
+    # Redis에 다시 저장할 데이터
 
     updated_state = {
 
-        "transaction_count":
-            transaction_count,
+        # 최신 거래 횟수
+        "transaction_count": transaction_count,
 
-        "total_amount":
-            total_amount,
+        # 최신 누적 금액
+        "total_amount": total_amount,
 
-        "night_count":
-            night_count,
+        # 최신 야간 거래 수
+        "night_count": night_count,
 
-        "total_distance":
-            total_distance,
+        # 최신 누적 거리
+        "total_distance": total_distance
 
-        "last_transaction_time":
-            str(dt)
     }
 
-    return features, updated_state
+    # ========================================================
+    # 반환
+    # ========================================================
+
+    return (
+        # AI 입력값
+        features,
+
+        # Redis 저장 데이터
+        updated_state
+    )
+
