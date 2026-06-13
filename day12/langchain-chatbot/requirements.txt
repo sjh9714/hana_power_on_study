@@ -1,0 +1,7 @@
+langchain
+langchain-core
+langchain-openai
+langchain-google-genai
+gradio
+fastapi
+uvicorn
