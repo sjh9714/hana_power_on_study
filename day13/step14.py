@@ -1,35 +1,37 @@
+# pip install chromadb google-genai
+
 import os
 import chromadb
-from openai import OpenAI
+from google import genai
 
-# -----------------------------------
-# OpenAI Client
-# -----------------------------------
+# ----------------------------------
+# Gemini Client
+# ----------------------------------
 
-client_openai = OpenAI(
-    api_key=os.getenv("OPENAI_API_KEY")
+client_gemini = genai.Client(
+    api_key=os.environ["GOOGLE_API_KEY"]
 )
 
-# -----------------------------------
+# ----------------------------------
 # ChromaDB
-# -----------------------------------
+# ----------------------------------
 
 client_chroma = chromadb.PersistentClient(
-    path="./my_native_openai_db"
+    path="./my_native_google_db"
 )
 
 collection = client_chroma.get_or_create_collection(
-    name="book_recommendation_native"
+    name="book_recommendation_google_native"
 )
 
-# -----------------------------------
-# 원본 문서
-# -----------------------------------
+# ----------------------------------
+# 문서
+# ----------------------------------
 
 documents = [
     "파이썬을 활용한 머신러닝과 딥러닝 실무 가이드. 데이터 전처리부터 모델 배포까지 다룹니다.",
     "자바 스프링 부트 기반의 엔터프라이즈 웹 애플리케이션 아키텍처 및 백엔드 개발.",
-    "쿠버네티스와 도커를 이용한 마이크로서비스 아키텍처 구축 및 DevOps 인프라 실무.",
+    "쿠버네티스와 도커를 이용한 마이크로서비스 아키텍처 구축 및 Devops 인프라 실무.",
     "시간 흐름에 따른 데이터 분석과 LSTM, RNN 기반의 시계열 딥러닝 예측 모델링.",
     "맛있는 이탈리아 파스타 요리 레시피와 토마토 소스 숙성 비법 가이드."
 ]
@@ -50,27 +52,30 @@ metadatas = [
     {"category": "Cooking", "year": 2023}
 ]
 
-# -----------------------------------
-# OpenAI Embedding 생성
-# -----------------------------------
+# ----------------------------------
+# Gemini Embedding 생성
+# ----------------------------------
 
 print("임베딩 생성 중...")
 
-response = client_openai.embeddings.create(
-    model="text-embedding-3-large",
-    input=documents
-)
+embeddings = []
 
-embeddings = [
-    item.embedding
-    for item in response.data
-]
+for text in documents:
+
+    response = client_gemini.models.embed_content(
+        model="gemini-embedding-001",
+        contents=text
+    )
+
+    embeddings.append(
+        response.embeddings[0].values
+    )
 
 print("임베딩 완료")
 
-# -----------------------------------
+# ----------------------------------
 # Chroma 저장
-# -----------------------------------
+# ----------------------------------
 
 collection.add(
     ids=ids,
@@ -81,19 +86,22 @@ collection.add(
 
 print("저장 완료")
 
-query_text = "컨테이너 기반의 클라우드 인프라를 공부하고 싶어"
+query_text = "컨테이너 기반의 클라우드 배포 인프라를 공식 공부하고 싶어"
 
-# 질문에 대한 Embedding 객체를 OpenAI로 사용하여 생성
-query_embedding = (
-    client_openai.embeddings.create(
-        model="text-embedding-3-large",
-        input=query_text
-    )
-    .data[0]
-    .embedding
+# ----------------------------------
+# Query Embedding
+# ----------------------------------
+
+query_response = client_gemini.models.embed_content(
+    model="gemini-embedding-001",
+    contents=query_text
 )
+query_embedding = query_response.embeddings[0].values
 
-# 질문 Embedding 객체를 사용하여 Chroma 검색
+# ----------------------------------
+# Vector Search
+# ----------------------------------
+
 results = collection.query(
     query_embeddings=[query_embedding],
     n_results=2
@@ -102,6 +110,7 @@ results = collection.query(
 print("\n검색 결과")
 
 for i in range(len(results["documents"][0])):
+
     doc = results['documents'][0][i]
     doc_id = results['ids'][0][i]
     meta = results['metadatas'][0][i]
@@ -111,4 +120,3 @@ for i in range(len(results["documents"][0])):
     print(f"카테고리: {meta['category']} / 발행년도: {meta['year']}")
     print(f"내용 요약: {doc}")
     print("-" * 50)
-
