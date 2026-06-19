@@ -1,0 +1,4 @@
+# Add one RSS feed URL per line. Lines starting with # are ignored.
+# Default examples included below; replace or extend as needed.
+http://feeds.reuters.com/reuters/businessNews
+https://news.google.com/rss/search?q=financial+news&hl=en-US&gl=US&ceid=US:en
