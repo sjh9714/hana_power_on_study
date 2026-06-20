@@ -2,7 +2,7 @@
 import os
 from langchain_openai import ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
-from day15.agri_rag_chatbot.config.settings import MODEL_CONFIG, DEFAULT_TEMPERATURE
+from config.settings import MODEL_CONFIG, DEFAULT_TEMPERATURE
 
 # get_llm() 함수는 선택된 모델 정보를 기반으로 적절한 LLM 객체를 생성하여 반환하는 역할을 합니다.
 # MODEL_CONFIG 딕셔너리에서 선택된 모델의 정보를 가져와서, 해당 모델의 제공자(provider)에 따라 ChatOpenAI 또는 ChatGoogleGenerativeAI 객체를 생성하여 반환합니다.
