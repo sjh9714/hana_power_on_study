@@ -2,18 +2,18 @@ import uuid
 import gradio as gr
 
 # 설정값과 비즈니스 로직 함수, 메모리 관리 함수를 임포트
-from day15.agri_rag_chatbot.config.settings import (
+from config.settings import (
     CHATBOT_TITLE,
     MODEL_CONFIG
 )
 
 # 비즈니스 로직 함수 (사용자 입력 처리 및 모델 응답 생성) 임포트
-from day15.agri_rag_chatbot.services.chat_service import (
+from services.chat_service import (
     chat
 )
 
 # 세션 메모리 초기화 함수 임포트
-from day15.agri_rag_chatbot.memory.session_memory import (
+from memory.session_memory import (
     clear_session
 )
 
