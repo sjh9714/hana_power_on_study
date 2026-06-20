@@ -1,0 +1,1184 @@
+# 제6장. prompts/finance_prompt.py 완전 분석
+
+---
+
+# 학습 목표
+
+이 장을 학습한 후 다음 내용을 설명할 수 있어야 한다.
+
+## 지식 목표
+
+* Prompt Engineering 이해
+* ChatPromptTemplate 이해
+* System Message 이해
+* Human Message 이해
+* MessagesPlaceholder 이해
+* Prompt 설계 방법 이해
+
+---
+
+## 실습 목표
+
+* Prompt 수정
+* Prompt 품질 비교
+* Memory Prompt 적용
+* 역할(Role) Prompt 적용
+
+---
+
+## 최종 목표
+
+다음 질문에 답할 수 있어야 한다.
+
+```text
+같은 LLM인데
+
+왜 Prompt에 따라
+
+답변 품질이 달라지는가?
+```
+
+---
+
+# 6.1 Prompt란 무엇인가?
+
+초급 개발자가 가장 많이 하는 질문
+
+```text
+Prompt가 뭐예요?
+```
+
+---
+
+답
+
+```text
+LLM에게 주는 지시문
+```
+
+---
+
+예)
+
+사용자 질문
+
+```text
+대출 금리 알려줘
+```
+
+---
+
+Prompt 없음
+
+```text
+대출 금리는...
+```
+
+---
+
+Prompt 있음
+
+```text
+당신은 금융 전문가입니다.
+
+질문:
+
+대출 금리를 알려줘
+```
+
+---
+
+결과
+
+```text
+전문가 스타일 답변
+```
+
+---
+
+# UML
+
+```text
+사용자 질문
+        │
+        ▼
+     Prompt
+        │
+        ▼
+      LLM
+        │
+        ▼
+      답변
+```
+
+---
+
+# 6.2 실제 프로젝트 Prompt
+
+실제 코드
+
+```python
+from langchain_core.prompts import (
+    ChatPromptTemplate,
+    MessagesPlaceholder
+)
+
+finance_prompt = ChatPromptTemplate.from_messages(
+    [
+        (
+            "system",
+            """
+            당신은 금융 전문가입니다.
+            """
+        ),
+
+        MessagesPlaceholder(
+            "chat_history"
+        ),
+
+        (
+            "human",
+            "{question}"
+        )
+    ]
+)
+```
+
+---
+
+# 전체 구조
+
+```text
+System Message
+
+↓
+
+History
+
+↓
+
+Human Message
+
+↓
+
+LLM
+```
+
+---
+
+# UML
+
+```text
+┌─────────────────────┐
+│ System Message      │
+└─────────┬───────────┘
+          │
+          ▼
+┌─────────────────────┐
+│ Chat History        │
+└─────────┬───────────┘
+          │
+          ▼
+┌─────────────────────┐
+│ Human Message       │
+└─────────┬───────────┘
+          │
+          ▼
+┌─────────────────────┐
+│      LLM            │
+└─────────────────────┘
+```
+
+---
+
+# 6.3 ChatPromptTemplate
+
+코드
+
+```python
+ChatPromptTemplate
+```
+
+---
+
+역할
+
+```text
+채팅용 Prompt 생성
+```
+
+---
+
+학생 질문
+
+```text
+PromptTemplate과
+
+ChatPromptTemplate
+
+차이는?
+```
+
+---
+
+PromptTemplate
+
+```text
+일반 문자열
+```
+
+---
+
+예
+
+```python
+template = """
+질문:
+{question}
+"""
+```
+
+---
+
+ChatPromptTemplate
+
+```text
+메시지 기반
+```
+
+---
+
+예
+
+```python
+[
+    ("system","..."),
+    ("human","...")
+]
+```
+
+---
+
+LangChain 최신 권장
+
+```text
+ChatPromptTemplate
+```
+
+---
+
+# Before
+
+```python
+PromptTemplate
+```
+
+---
+
+# After
+
+```python
+ChatPromptTemplate
+```
+
+---
+
+장점
+
+```text
+Memory 지원
+
+Chat 모델 최적화
+```
+
+---
+
+# 6.4 System Message
+
+가장 중요
+
+---
+
+코드
+
+```python
+(
+    "system",
+    """
+    당신은 금융 전문가입니다.
+    """
+)
+```
+
+---
+
+역할
+
+```text
+AI 역할 지정
+```
+
+---
+
+예)
+
+```text
+당신은 금융 전문가입니다.
+```
+
+---
+
+결과
+
+```text
+금융 전문가 스타일 답변
+```
+
+---
+
+예)
+
+```text
+당신은 초등학교 교사입니다.
+```
+
+---
+
+결과
+
+```text
+쉽게 설명
+```
+
+---
+
+예)
+
+```text
+당신은 변호사입니다.
+```
+
+---
+
+결과
+
+```text
+법률 전문가 답변
+```
+
+---
+
+# 실습 1
+
+현재
+
+```python
+당신은 금융 전문가입니다.
+```
+
+---
+
+수정
+
+```python
+당신은 초등학교 교사입니다.
+```
+
+---
+
+질문
+
+```text
+대출이란?
+```
+
+---
+
+답변 비교
+
+---
+
+# 6.5 MessagesPlaceholder
+
+실제 프로젝트 핵심
+
+---
+
+코드
+
+```python
+MessagesPlaceholder(
+    "chat_history"
+)
+```
+
+---
+
+역할
+
+```text
+Memory 삽입 위치
+```
+
+---
+
+예)
+
+Memory
+
+```text
+사용자:
+내 이름은 홍길동
+
+AI:
+안녕하세요
+```
+
+---
+
+Prompt
+
+```text
+System
+
+↓
+
+History
+
+↓
+
+Question
+```
+
+---
+
+최종 Prompt
+
+```text
+당신은 금융 전문가입니다.
+
+사용자:
+내 이름은 홍길동
+
+AI:
+안녕하세요
+
+질문:
+내 이름이 뭐지?
+```
+
+---
+
+# UML
+
+```text
+History
+     │
+     ▼
+MessagesPlaceholder
+     │
+     ▼
+Prompt
+```
+
+---
+
+# 실제 오류 사례
+
+오류
+
+```text
+missing variable chat_history
+```
+
+---
+
+원인
+
+```python
+MessagesPlaceholder(
+    "chat_history"
+)
+```
+
+존재
+
+---
+
+하지만
+
+```python
+RunnableWithMessageHistory
+```
+
+없음
+
+---
+
+결과
+
+```text
+history 없음
+```
+
+---
+
+# 해결
+
+Prompt
+
+```python
+MessagesPlaceholder()
+```
+
+---
+
+*
+
+```python
+RunnableWithMessageHistory()
+```
+
+---
+
+동시 적용
+
+---
+
+# 6.6 Human Message
+
+코드
+
+```python
+(
+    "human",
+    "{question}"
+)
+```
+
+---
+
+역할
+
+```text
+사용자 질문
+```
+
+---
+
+예)
+
+입력
+
+```python
+{
+    "question":
+    "대출이란?"
+}
+```
+
+---
+
+결과
+
+```text
+대출이란?
+```
+
+---
+
+학생 질문
+
+```text
+왜 question인가요?
+```
+
+---
+
+답
+
+```text
+변수명일 뿐
+```
+
+---
+
+가능
+
+```python
+{query}
+```
+
+---
+
+가능
+
+```python
+{message}
+```
+
+---
+
+중요
+
+```text
+Prompt와 Chain 변수명 일치
+```
+
+---
+
+# 실제 오류 사례
+
+Prompt
+
+```python
+{query}
+```
+
+---
+
+Chain
+
+```python
+{
+    "question": message
+}
+```
+
+---
+
+결과
+
+```text
+KeyError
+```
+
+또는
+
+```text
+Missing Variable
+```
+
+---
+
+# 해결
+
+Prompt
+
+```python
+{question}
+```
+
+---
+
+또는
+
+Chain
+
+```python
+{
+    "query": message
+}
+```
+
+---
+
+일치
+
+---
+
+# 6.7 Prompt 내부 동작
+
+사용자 질문
+
+```text
+대출 금리를 알려줘
+```
+
+---
+
+1단계
+
+System
+
+```text
+당신은 금융 전문가입니다.
+```
+
+---
+
+2단계
+
+History
+
+```text
+이전 대화
+```
+
+---
+
+3단계
+
+Human
+
+```text
+대출 금리를 알려줘
+```
+
+---
+
+최종 Prompt
+
+```text
+SYSTEM
+
+당신은 금융 전문가입니다.
+
+HISTORY
+
+...
+
+USER
+
+대출 금리를 알려줘
+```
+
+---
+
+LLM 전달
+
+---
+
+# Prompt 생성 과정
+
+```text
+Question
+     │
+     ▼
+Prompt Template
+     │
+     ▼
+Prompt Value
+     │
+     ▼
+LLM
+```
+
+---
+
+# 실습 2
+
+Prompt 출력
+
+코드
+
+```python
+prompt_value = finance_prompt.invoke(
+    {
+        "question":
+        "대출이란?"
+    }
+)
+
+print(prompt_value)
+```
+
+---
+
+결과 확인
+
+---
+
+# Prompt Engineering
+
+중요
+
+---
+
+나쁜 Prompt
+
+```text
+답변해줘
+```
+
+---
+
+좋은 Prompt
+
+```text
+당신은 금융 전문가입니다.
+
+초보자도 이해할 수 있게 설명하세요.
+
+예제를 포함하세요.
+```
+
+---
+
+결과 차이
+
+엄청 큼
+
+---
+
+# Before / After 비교
+
+## Before
+
+```text
+대출은 돈을 빌리는 것입니다.
+```
+
+---
+
+## After
+
+```text
+대출은 은행이나 금융기관에서
+
+일정 기간 동안 돈을 빌리고
+
+나중에 이자와 함께 갚는 금융 상품입니다.
+
+예를 들어...
+```
+
+---
+
+# 실습 문제 (25문제)
+
+### 1
+
+Prompt란?
+
+### 2
+
+System Message 역할은?
+
+### 3
+
+Human Message 역할은?
+
+### 4
+
+MessagesPlaceholder 역할은?
+
+### 5
+
+ChatPromptTemplate 역할은?
+
+### 6
+
+PromptTemplate과 차이는?
+
+### 7
+
+왜 System Message를 사용하는가?
+
+### 8
+
+왜 Memory가 Prompt에 들어가는가?
+
+### 9
+
+question 변수 역할은?
+
+### 10
+
+Prompt 변수명이 중요한 이유는?
+
+### 11
+
+Prompt Engineering이란?
+
+### 12
+
+좋은 Prompt 조건은?
+
+### 13
+
+나쁜 Prompt 특징은?
+
+### 14
+
+History가 없는 경우는?
+
+### 15
+
+History가 있는 경우 장점은?
+
+### 16
+
+금융 전문가 Prompt 장점은?
+
+### 17
+
+교사 Prompt 장점은?
+
+### 18
+
+변호사 Prompt 장점은?
+
+### 19
+
+ChatPromptTemplate 장점은?
+
+### 20
+
+Memory 연결 구조는?
+
+### 21
+
+Prompt 생성 순서는?
+
+### 22
+
+Prompt Value란?
+
+### 23
+
+LLM 입력은 무엇인가?
+
+### 24
+
+Missing Variable 오류 원인은?
+
+### 25
+
+Prompt 품질이 중요한 이유는?
+
+---
+
+# 정답 및 해설
+
+### 1
+
+LLM 지시문
+
+### 2
+
+역할 설정
+
+### 3
+
+사용자 질문
+
+### 4
+
+Memory 삽입
+
+### 5
+
+채팅 Prompt 생성
+
+### 6
+
+메시지 기반 구조
+
+### 7
+
+답변 스타일 통제
+
+### 8
+
+대화 기억
+
+### 9
+
+질문 전달
+
+### 10
+
+Chain과 일치 필요
+
+### 11
+
+Prompt 설계 기술
+
+### 12
+
+명확성
+
+### 13
+
+모호함
+
+### 14
+
+단발성 대화
+
+### 15
+
+연속 대화 가능
+
+### 16~18
+
+전문성 제공
+
+### 19
+
+Chat 최적화
+
+### 20
+
+History → Prompt
+
+### 21
+
+System → History → Human
+
+### 22
+
+최종 Prompt 객체
+
+### 23
+
+Prompt Value
+
+### 24
+
+변수명 불일치
+
+### 25
+
+답변 품질 결정
+
+---
+
+# 수업 중 강조
+
+```text
+학생들이 AI를 마법처럼 생각하는 경우가 많습니다.
+
+하지만 실제로는
+
+좋은 Prompt를 작성하는 사람이
+
+좋은 결과를 얻습니다.
+
+Prompt Engineering은
+
+AI 개발자의 핵심 역량입니다.
+```
+
+---
+
+# 예상 질문
+
+### Q1
+
+Prompt만 바꿔도 답변이 달라지나요?
+
+A.
+
+엄청나게 달라집니다.
+
+---
+
+### Q2
+
+System Message가 꼭 필요한가요?
+
+A.
+
+필수는 아니지만 거의 사용합니다.
+
+---
+
+### Q3
+
+Prompt Engineering이 중요한 이유는?
+
+A.
+
+같은 모델이라도 결과 품질 차이가 매우 크기 때문입니다.
+
+---
+
+# 시험 문제
+
+## 객관식
+
+### 1
+
+대화 이력을 삽입하는 것은?
+
+① Human Message
+
+② System Message
+
+③ MessagesPlaceholder
+
+④ Parser
+
+정답
+
+```text
+③
+```
+
+---
+
+### 2
+
+AI 역할을 정의하는 것은?
+
+① PromptTemplate
+
+② System Message
+
+③ Parser
+
+④ Memory
+
+정답
+
+```text
+②
+```
+
+---
+
+## 주관식
+
+### 3
+
+Prompt 생성 과정을 설명하시오.
+
+---
+
+### 모범답안
+
+```text
+System Message,
+History,
+Human Message를 결합하여
+
+최종 Prompt를 생성하고
+
+이를 LLM에 전달한다.
+```
+
+---
+
+# 다음 장 예고
+
+제7장에서는
+
+```text
+llms/llm_factory.py
+```
+
+를 분석한다.
+
+여기서 학생들은
+
+* Factory Pattern
+* OpenAI 연동
+* Gemini 연동
+* 환경변수 관리
+* settings.py
+
+를 배우게 된다.
+
+그리고 **"왜 create_chain()에서 직접 ChatOpenAI를 생성하지 않고 Factory를 사용하는가?"** 를 이해하게 된다.
