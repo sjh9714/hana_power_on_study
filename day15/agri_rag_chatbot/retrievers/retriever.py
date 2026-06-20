@@ -1,5 +1,5 @@
-from day15.agri_rag_chatbot.config.settings import TOP_K
-from day15.agri_rag_chatbot.vectorstores.chroma_store import (
+from config.settings import TOP_K
+from vectorstores.chroma_store import (
     load_vector_store
 )
 
