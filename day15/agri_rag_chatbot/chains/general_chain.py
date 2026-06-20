@@ -1,9 +1,9 @@
 
-from day15.agri_rag_chatbot.prompts.general_prompt import general_prompt
+from prompts.general_prompt import general_prompt
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.runnables.history import RunnableWithMessageHistory
-from day15.agri_rag_chatbot.memory.session_memory import get_session_history
+from memory.session_memory import get_session_history
 
 # 일반 GPT 체인 생성 함수
 # create_chain() 함수는 선택된 모델을 기반으로 일반 GPT 체인을 생성하는 역할을 합니다.
