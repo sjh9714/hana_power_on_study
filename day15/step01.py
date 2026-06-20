@@ -161,7 +161,7 @@ def format_docs_with_pages(docs):
     ##################################################
 
     page_text = ", ".join(
-        str(page)
+        str(page + 1)
         for page in pages
     )
 
@@ -210,9 +210,6 @@ prompt = PromptTemplate.from_template(
    라고 답변한다.
 5. 참고 페이지를 함께 표시한다.
 
-참고 페이지:
-{page_text}
-
 답변:
 """
 )
@@ -248,7 +245,7 @@ parser = StrOutputParser()
 """
 동작 순서
 
-       사용자 질문
+      사용자 질문
             │
             ▼
  ┌───────────────────────┐
@@ -283,14 +280,17 @@ context 생성
               StrOutputParser
                      │
                      ▼
+
                  최종 답변
 """
 
 chain = (
     {
+        # 병렬 실행
         "context": retriever | format_docs,
         "query": RunnablePassthrough()
     }
+    # 순차 실행
     | prompt
     | llm
     | parser
@@ -300,8 +300,29 @@ chain = (
 # 실행
 ##############################################################################
 
-query = "농작물 재배관리 의사결정에 대해 알려줘"
+# query = "농작물 재배관리 의사결정에 대해 알려줘"
 
-answer = chain.invoke(query)
+# answer = chain.invoke(query)
 
-print(answer)
+# print(answer)
+
+queries = [
+
+    "작물모형을 이용한 웹 기반 밀 재배관리 의사결정 지원시스템",
+    "밀 재배관리 방법 알려줘",
+    "토양 관리 방법 알려줘",
+
+    "GPT란 무엇인가?",
+    "LangChain LCEL이란?",
+    "Docker란 무엇인가?"
+
+]
+
+for query in queries:
+
+    answer = chain.invoke(query)
+
+    print()
+    print(answer)
+    print()
+    print("=" * 60)
