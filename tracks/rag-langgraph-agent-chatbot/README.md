@@ -21,10 +21,17 @@
 
 ```bash
 pip install -r day16/agri_rag_chatbot_langgraph2/requirements.txt
-python3 day16/agri_rag_chatbot_langgraph2/app.py
+cd day16/agri_rag_chatbot_langgraph2
+uvicorn app:app --reload
 ```
 
 실행 전에는 `.env` 또는 환경 변수로 필요한 API key를 설정합니다. 실제 key는 저장소에 커밋하지 않습니다.
+
+## UI Snapshot
+
+아래 이미지는 API key나 실제 문서 검색을 실행하지 않고, Gradio 초기 화면만 캡처한 포트폴리오용 스냅샷입니다.
+
+![RAG LangGraph chatbot UI](../../assets/portfolio/rag-langgraph-chatbot-ui.png)
 
 ## 핵심 결과
 
