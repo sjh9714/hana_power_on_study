@@ -20,10 +20,12 @@ GitHub는 코드와 학습 흔적을 보여주는 증거로, Velog는 문제를 
 
 ### Evidence
 
+- Track README: [`tracks/credit-card-transaction-eda`](../tracks/credit-card-transaction-eda)
 - [`step1`](../step1)
 - [`day5`](../day5)
 - [`day6`](../day6)
 - [`day8/fraud_detection_system`](../day8/fraud_detection_system)
+- [`sample_data`](../sample_data)
 
 ### 포트폴리오 메시지
 
@@ -45,6 +47,7 @@ GitHub는 코드와 학습 흔적을 보여주는 증거로, Velog는 문제를 
 
 ### Evidence
 
+- Track README: [`tracks/finance-prompt-engineering-lab`](../tracks/finance-prompt-engineering-lab)
 - [`day10/1.1.md`](../day10/1.1.md)
 - [`day10/openai`](../day10/openai)
 - [`day10/analysis.py`](../day10/analysis.py)
@@ -70,6 +73,7 @@ AI 기능은 빠르게 검증 가능한 UI와 API 구조가 있어야 사용자 
 
 ### Evidence
 
+- Track README: [`tracks/fastapi-gradio-ai-chat-demo`](../tracks/fastapi-gradio-ai-chat-demo)
 - [`day10/gradio`](../day10/gradio)
 - [`day11/langchain-chatbot`](../day11/langchain-chatbot)
 - [`day12/langchain-chatbot`](../day12/langchain-chatbot)
@@ -96,6 +100,7 @@ AI 기능은 빠르게 검증 가능한 UI와 API 구조가 있어야 사용자 
 
 ### Evidence
 
+- Track README: [`tracks/rag-langgraph-agent-chatbot`](../tracks/rag-langgraph-agent-chatbot)
 - [`day13`](../day13)
 - [`day14`](../day14)
 - [`day15/agri_rag_chatbot`](../day15/agri_rag_chatbot)
@@ -107,6 +112,7 @@ AI 기능은 빠르게 검증 가능한 UI와 API 구조가 있어야 사용자 
 
 ## Portfolio Next Steps
 
-- 대표 트랙별 README를 추가해 실행 방법과 결과 화면을 분리합니다.
-- 대형 데이터와 벡터 DB 산출물은 샘플 데이터 또는 재생성 스크립트로 대체할 수 있습니다.
+- 대표 트랙별 README를 추가해 실행 방법과 결과 화면을 분리했습니다.
+- 대형 데이터, PDF 원본, 벡터 DB 산출물은 공개 저장소의 현재 트래킹과 Git 히스토리에서 제거했습니다.
+- 공개 재현은 [`sample_data`](../sample_data)와 [`scripts`](../scripts)를 기준으로 진행합니다.
 - Velog 글에서는 강의 요약보다 설계 판단, 실패 지점, 금융 도메인 연결을 중심으로 정리합니다.

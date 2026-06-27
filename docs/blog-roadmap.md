@@ -13,10 +13,16 @@ Velog 시리즈는 `하나 청년 금융인재 프로젝트`로 운영합니다.
 | Order | Title | Purpose | GitHub Evidence | Velog |
 | --- | --- | --- | --- | --- |
 | 1 | `[하나 금융인재 프로젝트] 학습 기록을 포트폴리오로 재구성한 이유` | 저장소 전체 방향과 GitHub/Velog 역할 분리 설명 | [`README.md`](../README.md), [`docs/portfolio-index.md`](portfolio-index.md) | [보기](https://velog.io/@sjh9714/hana-finance-ai-portfolio-reorganization) |
-| 2 | `[금융 데이터 분석] Pandas로 신용카드 거래 데이터 EDA 구조 잡기` | 거래 데이터 구조와 EDA 관점 정리 | [`step1`](../step1), [`day5`](../day5), [`day6`](../day6) | [보기](https://velog.io/@sjh9714/hana-credit-card-eda) |
-| 3 | `[금융 AI] 프롬프트는 요구사항 명세에 가깝다` | 금융 안내 챗봇에서 역할, 제약, 출력 형식이 필요한 이유 | [`day10`](../day10) | [보기](https://velog.io/@sjh9714/hana-finance-prompt-engineering) |
-| 4 | `[RAG 챗봇] PDF 문서를 검색 가능한 지식베이스로 바꾸기` | PDF 처리, chunking, embedding, vector store 흐름 정리 | [`day13`](../day13), [`day14`](../day14) | [보기](https://velog.io/@sjh9714/hana-pdf-rag-knowledge-base) |
-| 5 | `[LangGraph] 금융/문서 챗봇에 Tool Router를 붙이며 배운 점` | ReAct Agent, ToolNode, 전처리/후처리 경계 설명 | [`day16/agri_rag_chatbot_langgraph2`](../day16/agri_rag_chatbot_langgraph2) | [보기](https://velog.io/@sjh9714/hana-langgraph-tool-router) |
+| 2 | `[금융 데이터 분석] Pandas로 신용카드 거래 데이터 EDA 구조 잡기` | 거래 데이터 구조와 EDA 관점 정리 | [`tracks/credit-card-transaction-eda`](../tracks/credit-card-transaction-eda), [`sample_data`](../sample_data) | [보기](https://velog.io/@sjh9714/hana-credit-card-eda) |
+| 3 | `[금융 AI] 프롬프트는 요구사항 명세에 가깝다` | 금융 안내 챗봇에서 역할, 제약, 출력 형식이 필요한 이유 | [`tracks/finance-prompt-engineering-lab`](../tracks/finance-prompt-engineering-lab), [`day10`](../day10) | [보기](https://velog.io/@sjh9714/hana-finance-prompt-engineering) |
+| 4 | `[RAG 챗봇] PDF 문서를 검색 가능한 지식베이스로 바꾸기` | PDF 처리, chunking, embedding, vector store 흐름 정리 | [`tracks/rag-langgraph-agent-chatbot`](../tracks/rag-langgraph-agent-chatbot), [`day13`](../day13), [`day14`](../day14) | [보기](https://velog.io/@sjh9714/hana-pdf-rag-knowledge-base) |
+| 5 | `[LangGraph] 금융/문서 챗봇에 Tool Router를 붙이며 배운 점` | ReAct Agent, ToolNode, 전처리/후처리 경계 설명 | [`tracks/rag-langgraph-agent-chatbot`](../tracks/rag-langgraph-agent-chatbot), [`day16/agri_rag_chatbot_langgraph2`](../day16/agri_rag_chatbot_langgraph2) | [보기](https://velog.io/@sjh9714/hana-langgraph-tool-router) |
+
+## Repository Updates Reflected In Posts
+
+- 대형 원본 데이터, PDF, OCR/output, Chroma DB 산출물은 공개 저장소 히스토리에서 제거했습니다.
+- 신용카드 거래 데이터 설명은 synthetic [`sample_data`](../sample_data)를 기준으로 연결합니다.
+- 대표 트랙별 상세 설명은 [`tracks`](../tracks) 하위 README로 분리했습니다.
 
 ## Post Template
 

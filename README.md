@@ -18,20 +18,21 @@
 
 ## Recommended Reading Order
 
-1. [Portfolio Index](docs/portfolio-index.md)에서 대표 프로젝트 4개를 먼저 확인합니다.
-2. [Learning Log](docs/learning-log.md)에서 날짜별 학습 흐름을 확인합니다.
-3. [Blog Roadmap](docs/blog-roadmap.md)에서 Velog 글로 확장할 주제를 확인합니다.
-4. 원본 실습 폴더(`day*`, `step1`)에서 코드와 노트북을 확인합니다.
-5. [Public Data Policy](docs/public-data-policy.md)에서 공개 범위와 데이터 관리 기준을 확인합니다.
+1. 아래 [Highlighted Portfolio Tracks](#highlighted-portfolio-tracks)에서 대표 트랙 4개를 먼저 확인합니다.
+2. 각 트랙 README에서 문제 정의, 사용 기술, 재현 방법, GitHub evidence를 확인합니다.
+3. [Portfolio Index](docs/portfolio-index.md)에서 전체 포트폴리오 관점을 확인합니다.
+4. [Learning Log](docs/learning-log.md)에서 날짜별 학습 흐름을 확인합니다.
+5. [Blog Roadmap](docs/blog-roadmap.md)에서 Velog 회고 글과 연결합니다.
+6. [Public Data Policy](docs/public-data-policy.md)에서 공개 범위와 데이터 관리 기준을 확인합니다.
 
 ## Highlighted Portfolio Tracks
 
-| Track | Summary | Evidence |
-| --- | --- | --- |
-| Credit Card Transaction EDA | 신용카드 거래 데이터를 Pandas와 시계열 관점으로 분석하는 기초 실습 | [`step1`](step1), [`day5`](day5), [`day6`](day6) |
-| Finance Prompt Engineering Lab | 금융 안내 챗봇을 위한 역할, 제약 조건, 출력 형식 중심 프롬프트 설계 | [`day10`](day10) |
-| FastAPI + Gradio AI Chat Demo | Gradio UI와 FastAPI 구조로 빠르게 검증 가능한 AI 챗봇 데모 실습 | [`day10/gradio`](day10/gradio), [`day11/langchain-chatbot`](day11/langchain-chatbot), [`day12/langchain-chatbot`](day12/langchain-chatbot) |
-| RAG + LangGraph Agent Chatbot | PDF 문서 처리, Chroma 검색, Tool Router, LangGraph Agent 흐름 실습 | [`day13`](day13), [`day14`](day14), [`day15`](day15), [`day16`](day16) |
+| Track | Summary | README | Evidence |
+| --- | --- | --- | --- |
+| Credit Card Transaction EDA | 신용카드 거래 데이터를 Pandas와 시계열 관점으로 분석하는 기초 실습 | [`tracks/credit-card-transaction-eda`](tracks/credit-card-transaction-eda) | [`step1`](step1), [`day5`](day5), [`day6`](day6), [`sample_data`](sample_data) |
+| Finance Prompt Engineering Lab | 금융 안내 챗봇을 위한 역할, 제약 조건, 출력 형식 중심 프롬프트 설계 | [`tracks/finance-prompt-engineering-lab`](tracks/finance-prompt-engineering-lab) | [`day10`](day10) |
+| FastAPI + Gradio AI Chat Demo | Gradio UI와 FastAPI 구조로 빠르게 검증 가능한 AI 챗봇 데모 실습 | [`tracks/fastapi-gradio-ai-chat-demo`](tracks/fastapi-gradio-ai-chat-demo) | [`day10/gradio`](day10/gradio), [`day11/langchain-chatbot`](day11/langchain-chatbot), [`day12/langchain-chatbot`](day12/langchain-chatbot) |
+| RAG + LangGraph Agent Chatbot | PDF 문서 처리, Chroma 검색, Tool Router, LangGraph Agent 흐름 실습 | [`tracks/rag-langgraph-agent-chatbot`](tracks/rag-langgraph-agent-chatbot) | [`day13`](day13), [`day14`](day14), [`day15`](day15), [`day16`](day16) |
 
 ## Repository Structure
 
@@ -41,8 +42,10 @@
 ├── day3~day9/ # Python, 데이터 처리, 금융 데이터 구조, FDS 기초
 ├── day10~12/  # 프롬프트 엔지니어링, Gradio, OpenAI, LangChain 챗봇 실습
 ├── day13~16/  # PDF 처리, RAG, Chroma, Router, LangGraph Agent 실습
-├── data/      # 로컬 재현용 대형 데이터 압축 파일
-└── docs/      # 포트폴리오 인덱스와 공개 정책 문서
+├── sample_data/ # 공개 가능한 synthetic 샘플 데이터
+├── scripts/     # 샘플 데이터 생성과 재현 보조 스크립트
+├── tracks/      # 대표 포트폴리오 트랙 README
+└── docs/        # 포트폴리오 인덱스와 공개 정책 문서
 ```
 
 ## What This Repository Is
@@ -59,7 +62,9 @@
 
 ## Data And Disclosure Notes
 
-이 저장소에는 실습 재현을 위한 데이터 압축 파일, 벡터 DB 산출물, PDF 처리 결과물이 포함되어 있습니다. 이번 정리에서는 기존 파일을 삭제하지 않고, 공개 범위와 주의사항을 문서화하는 방식으로 관리합니다.
+공개 저장소 안전화를 위해 대형 압축 데이터, 원본 PDF, OCR/output 산출물, Chroma/vector DB 산출물은 현재 트래킹과 Git 히스토리에서 제거했습니다.
+
+재현 설명은 [`sample_data`](sample_data)의 synthetic 데이터와 [`scripts`](scripts)의 생성 스크립트를 기준으로 합니다. 실제 교육 제공 데이터, 실제 금융 거래 원본, API key는 저장소에 포함하지 않습니다.
 
 자세한 기준은 [Public Data Policy](docs/public-data-policy.md)를 참고하세요.
 

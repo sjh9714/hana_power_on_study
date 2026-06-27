@@ -31,3 +31,26 @@ step1/.vscode/
 step1/data/credit_card_transactions.csv
 data/credit_card_transactions.csv
 step1/notebooks/data
+
+# Public portfolio cleanup: large/private/generated artifacts
+data/credit_card_transactions.zip
+data/credit_card_transactions.z01
+data/credit_card_transactions.z02
+*.z01
+*.z02
+day13/a.pdf
+day13/data/*.pdf
+day14/data/*.pdf
+day13/output/
+**/chroma_db/
+day13/my_*_db/
+day15/*.zip
+day16/*.zip
+*.db
+*.pkl
+*.joblib
+*.parquet
+*.feather
+.cache/
+cache/
+models/
