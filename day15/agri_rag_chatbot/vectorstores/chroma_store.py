@@ -4,7 +4,7 @@ from langchain_huggingface import (
     HuggingFaceEmbeddings
 )
 
-from day15.agri_rag_chatbot.config.settings import *
+from config.settings import *
 
 # Chroma DB에 저장된 벡터 스토어를 로드하는 함수입니다. 이 함수는 Chroma DB에 연결하여, 지정된 컬렉션에서 벡터 스토어를 로드합니다. 
 # 이렇게 로드된 벡터 스토어는 문서 임베딩과 검색 기능을 제공하는 객체입니다. 

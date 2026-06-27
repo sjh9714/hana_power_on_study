@@ -1,8 +1,8 @@
 
-from day15.agri_rag_chatbot.prompts.router_prompt import router_prompt
-from day15.agri_rag_chatbot.chains.rag_chain import create_chain as create_rag_chain
-from day15.agri_rag_chatbot.chains.general_chain import create_chain as create_general_chain
-from day15.agri_rag_chatbot.llms.llm_factory import get_llm
+from prompts.router_prompt import router_prompt
+from chains.rag_chain import create_chain as create_rag_chain
+from chains.general_chain import create_chain as create_general_chain
+from llms.llm_factory import get_llm
 from langchain_core.output_parsers import StrOutputParser
 
 # 라우터 체인 생성 함수

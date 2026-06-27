@@ -1,5 +1,5 @@
 
-from day15.agri_rag_chatbot.chains.router_chain import create_chain
+from chains.router_chain import create_chain
 
 # 비즈니스 로직 함수 (사용자 입력 처리 및 모델 응답 생성) 임포트
 # chat() 함수는 Gradio UI에서 사용자 입력이 제출될 때 호출되는 핵심 함수입니다.

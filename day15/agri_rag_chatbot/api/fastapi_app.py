@@ -4,7 +4,7 @@ from fastapi import FastAPI
 import gradio as gr
 
 # Import the Gradio UI creation function
-from day15.agri_rag_chatbot.ui.gradio_ui import (
+from ui.gradio_ui import (
     create_ui
 )
 
