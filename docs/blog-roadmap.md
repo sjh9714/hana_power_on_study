@@ -5,18 +5,18 @@ Velog 시리즈는 `하나 청년 금융인재 프로젝트`로 운영합니다.
 강의 내용을 그대로 요약하기보다, 각 글은 다음 구조를 따릅니다.
 
 ```text
-문제 정의 -> 실습 코드 -> 헷갈린 점 -> 금융 서비스와 연결 -> 한계와 개선점
+문제 정의 -> 실습 코드와 구조 -> 헷갈린 점 -> 금융 서비스와 연결 -> 한계와 개선점 -> GitHub 근거 링크
 ```
 
 ## Priority Posts
 
-| Order | Title | Purpose | GitHub Evidence |
-| --- | --- | --- | --- |
-| 1 | `[하나 금융인재 프로젝트] 학습 기록을 포트폴리오로 재구성한 이유` | 저장소 전체 방향과 GitHub/Velog 역할 분리 설명 | [`README.md`](../README.md), [`docs/portfolio-index.md`](portfolio-index.md) |
-| 2 | `[금융 데이터 분석] Pandas로 신용카드 거래 데이터 EDA 구조 잡기` | 거래 데이터 구조와 EDA 관점 정리 | [`step1`](../step1), [`day5`](../day5), [`day6`](../day6) |
-| 3 | `[금융 AI] 프롬프트는 요구사항 명세에 가깝다` | 금융 안내 챗봇에서 역할, 제약, 출력 형식이 필요한 이유 | [`day10`](../day10) |
-| 4 | `[RAG 챗봇] PDF 문서를 검색 가능한 지식베이스로 바꾸기` | PDF 처리, chunking, embedding, vector store 흐름 정리 | [`day13`](../day13), [`day14`](../day14) |
-| 5 | `[LangGraph] 금융/문서 챗봇에 Tool Router를 붙이며 배운 점` | ReAct Agent, ToolNode, 전처리/후처리 경계 설명 | [`day16/agri_rag_chatbot_langgraph2`](../day16/agri_rag_chatbot_langgraph2) |
+| Order | Title | Purpose | GitHub Evidence | Velog |
+| --- | --- | --- | --- | --- |
+| 1 | `[하나 금융인재 프로젝트] 학습 기록을 포트폴리오로 재구성한 이유` | 저장소 전체 방향과 GitHub/Velog 역할 분리 설명 | [`README.md`](../README.md), [`docs/portfolio-index.md`](portfolio-index.md) | [보기](https://velog.io/@sjh9714/hana-finance-ai-portfolio-reorganization) |
+| 2 | `[금융 데이터 분석] Pandas로 신용카드 거래 데이터 EDA 구조 잡기` | 거래 데이터 구조와 EDA 관점 정리 | [`step1`](../step1), [`day5`](../day5), [`day6`](../day6) | [보기](https://velog.io/@sjh9714/hana-credit-card-eda) |
+| 3 | `[금융 AI] 프롬프트는 요구사항 명세에 가깝다` | 금융 안내 챗봇에서 역할, 제약, 출력 형식이 필요한 이유 | [`day10`](../day10) | [보기](https://velog.io/@sjh9714/hana-finance-prompt-engineering) |
+| 4 | `[RAG 챗봇] PDF 문서를 검색 가능한 지식베이스로 바꾸기` | PDF 처리, chunking, embedding, vector store 흐름 정리 | [`day13`](../day13), [`day14`](../day14) | [보기](https://velog.io/@sjh9714/hana-pdf-rag-knowledge-base) |
+| 5 | `[LangGraph] 금융/문서 챗봇에 Tool Router를 붙이며 배운 점` | ReAct Agent, ToolNode, 전처리/후처리 경계 설명 | [`day16/agri_rag_chatbot_langgraph2`](../day16/agri_rag_chatbot_langgraph2) | [보기](https://velog.io/@sjh9714/hana-langgraph-tool-router) |
 
 ## Post Template
 
@@ -25,15 +25,15 @@ Velog 시리즈는 `하나 청년 금융인재 프로젝트`로 운영합니다.
 
 ## 한 줄 요약
 
-## 이 글에서 다룰 문제
+## 문제 정의
 
-## 실습에서 사용한 코드 또는 구조
+## 실습 코드와 구조
 
-## 헷갈렸던 점
+## 헷갈린 점
 
-## 금융 서비스와 연결하면?
+## 금융 서비스와 연결
 
-## GitHub에서 확인할 수 있는 것
+## GitHub 근거 링크
 
 ## 한계와 개선점
 
